@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Finder</title>
+  <script>
+    function getWords()
+    {
+      if(document.getElementById('word').value.length!==4)
+      {
+        document.getElementById('output').innerHTML = 'That\'s not a four letter word';
+        return;
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "fourletterwords.txt", true);
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4)
+        {
+          if (xhr.status === 200)
+          {
+            var word = document.getElementById('word').value.toLowerCase();
+            var words = xhr.responseText.toLowerCase();
+            var wordArray = words.split(/\r?\n/);
+            var answers = '';
+            wordArray.forEach(function(currentWord) {
+              var count = 0;
+              for (var x = 0; x<4; x++)
+              {
+                if(word.charAt(x)==currentWord.charAt(x))
+                {
+                  count++;
+                }
+              }
+              if(count==3)
+              {
+                answers+=currentWord+' ';
+              }
+            });
+            if(answers.length>0)
+            {
+              document.getElementById('output').innerHTML = answers;
+            }
+            else
+            {
+              document.getElementById('output').innerHTML = 'None found';
+            }
+          }
+          else {console.error(xhr.statusText);}
+        }
+      };
+      xhr.onerror = function (e)
+      {
+        console.error(xhr.statusText);
+      };
+      xhr.send(null);
+    }
+  </script>
+</head>
+
+<body>
+  <p>
+    Your word: <input type="text" name="word" value="word" id="word"><br><br>
+    <button onclick = "getWords()">Get related words</button>
+  </p>
+  <p id="output"></p>
+</body>
+
+</html>
